@@ -284,7 +284,8 @@ VALUES
 (7,16 ,16, 8,12325, 2),
 (8, 26, 26, 13, 30249, 3),
 (9, 31, 31, 16, 30242, 4),
-(10, 44, 44, 22, 30213, 5);
+(10, 44, 44, 22, 30213, 5);
+
 
 --Llenar direcciones
 
@@ -419,7 +420,8 @@ VALUES
 insert into tipoProcesoReco (procesoRecoid, descripcion) values
 (1,3),
 (2,4),
-(3,5);
+(3,5);
+
 
 insert into localesXproceso (localId, procesoRecoId) values
 (1,2),
@@ -468,7 +470,10 @@ insert into Traducciones (traduccionId,textOrg,textoTradu,idiomaId,enabled) valu
 
 insert into PayType (payId, descripcion) values
 (1, 1),
-(2, 2);--Metricasinsert into metricasXlocal (localId, indiceContaminacion, indiceRecoleccion,
+(2, 2);
+
+--Metricas
+insert into metricasXlocal (localId, indiceContaminacion, indiceRecoleccion,
 indiceTratamiento, año, checksum) values
 (1,57,28,93,'2023','checksum'),
 (2,64,46,85,'2023','checksum'),
@@ -489,8 +494,10 @@ indiceTratamiento, año, checksum) values
 (17,37,48,91,'2023','checksum'),
 (18,19,83,32,'2023','checksum'),
 (19,20,40,69,'2023','checksum'),
-(20,17,86,37,'2023','checksum');
+(20,17,86,37,'2023','checksum');
 
+
+SELECT * FROM divisas;
 SELECT * FROM paises;
 SELECT * FROM estados ;
 SELECT * FROM calles ;
@@ -506,6 +513,7 @@ SELECT * FROM direcciones;
 SELECT * FROM empresasEV;
 SELECT * FROM coberturaXempresas;
 SELECT * FROM metricasXlocal;
+SELECT * FROM categoriaProducto;
 
 DELETE FROM payType;
 DELETE FROM localesXproceso;

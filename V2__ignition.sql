@@ -1,3 +1,4 @@
+-- +FlywayNonRepeatable
 USE [esencialv]
 GO
 /****** Object:  UserDefinedTableType [dbo].[TVPquiz]    Script Date: 30/4/2023 16:05:02 ******/

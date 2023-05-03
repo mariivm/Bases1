@@ -1,0 +1,23 @@
+-- +FlywayNonRepeatable
+INSERT INTO actores (actorId, descripcion, tipoActorId) VALUES
+(1, 'KFC', 1),
+(2, 'McDonalds', 1),
+(3, 'Sardimar', 1),
+(4, 'Pollolandia', 1),
+(5, 'Apple', 1),
+(6, 'Walmart', 1),
+(7, 'CLEAN', 2),
+(8, 'WM', 2),
+(9, 'EBI', 2),
+(10, 'WasteTech', 2),
+(11, 'RBA', 2),
+(12, 'Ayuntamiento de Nueva York', 3),
+(13, 'Ayuntamiento de São Paulo', 3),
+(14, 'Municipalidad de San Jose', 3),
+(15, 'Municipio de Azul', 3),
+(16, 'Brampton Township', 3),
+(17, 'Gobierno de Estados Unidos', 4),
+(18, 'Gobierno de Brasil', 4),
+(19, 'Gobierno de Argentina', 4),
+(20, 'Gobierno de Costa Rica', 4),
+(21, 'Gobierno de Canada', 4);

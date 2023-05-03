@@ -284,8 +284,7 @@ VALUES
 (7,16 ,16, 8,12325, 2),
 (8, 26, 26, 13, 30249, 3),
 (9, 31, 31, 16, 30242, 4),
-(10, 44, 44, 22, 30213, 5);
-
+(10, 44, 44, 22, 30213, 5);
 
 --Llenar direcciones
 
@@ -399,10 +398,42 @@ BEGIN
   END
  END
 
+  --Llenar recipienteXlocal
+  DELETE FROM recipienteXlocal;
+
+  ALTER TABLE recipienteXlocal ADD CONSTRAINT uc_recipienteXlocal UNIQUE (localId, recipienteId);
+
+  DROP PROCEDURE IF EXISTS spRecipienteXlocal;
+CREATE PROCEDURE spRecipienteXlocal
+AS
+BEGIN
+  DECLARE @contador int;
+  SET @contador = 1;
+
+  WHILE (@contador <= 100)
+  BEGIN
+    DECLARE @localId int;
+	DECLARE @recipienteId int;
+	DECLARE @posttime DATETIME;
+	DECLARE @endtime DATETIME;
+
+    SET @localId = @contador;
+	SET @recipienteId =  @contador;
+	SET @posttime =  GETDATE();
+    SET @endtime = '01-01-2099 00:00:00';
+
+    INSERT INTO recipienteXlocal (localId,recipienteId,fechaInicial,fechaFinal)
+    VALUES (@localId,@recipienteId,@posttime,@endtime);
+
+    SET @contador = @contador + 1;
+  END
+ END
+
   exec spLlenarDirecciones;
   exec spLlenarEmpresas;
   exec spLlenarLocales;
   exec spLlenarCoberturaXempresa;
+  exec spRecipienteXlocal;
 
 INSERT INTO empresasEV (empresaId, direccionId)
 VALUES 
@@ -420,8 +451,7 @@ VALUES
 insert into tipoProcesoReco (procesoRecoid, descripcion) values
 (1,3),
 (2,4),
-(3,5);
-
+(3,5);
 
 insert into localesXproceso (localId, procesoRecoId) values
 (1,2),
@@ -470,10 +500,7 @@ insert into Traducciones (traduccionId,textOrg,textoTradu,idiomaId,enabled) valu
 
 insert into PayType (payId, descripcion) values
 (1, 1),
-(2, 2);
-
---Metricas
-insert into metricasXlocal (localId, indiceContaminacion, indiceRecoleccion,
+(2, 2);--Metricasinsert into metricasXlocal (localId, indiceContaminacion, indiceRecoleccion,
 indiceTratamiento, año, checksum) values
 (1,57,28,93,'2023','checksum'),
 (2,64,46,85,'2023','checksum'),
@@ -494,10 +521,163 @@ indiceTratamiento, año, checksum) values
 (17,37,48,91,'2023','checksum'),
 (18,19,83,32,'2023','checksum'),
 (19,20,40,69,'2023','checksum'),
-(20,17,86,37,'2023','checksum');
+(20,17,86,37,'2023','checksum');INSERT INTO Traducciones(traduccionId, textOrg, textoTradu, idiomaId, enabled) VALUES
+(3, 'Residuos plásticos', 'Plastic waste', 1, 1),
+(4, 'Residuos plásticos', 'Déchets plastiques', 5, 1),
+(5, 'Residuos plásticos', 'Resíduos plásticos', 4, 1),
+(6, 'Residuos orgánicos', 'Organic waste', 1, 1),
+(7, 'Residuos orgánicos', 'Déchets organiques', 5, 1),
+(8, 'Residuos orgánicos', 'Resíduos orgânicos', 4, 1),
+(9, 'Residuos electrónicos', 'Electronic waste', 1, 1),
+(10, 'Residuos electrónicos', 'Déchets électroniques', 5, 1),
+(11, 'Residuos electrónicos', 'Resíduos eletrônicos', 4, 1),
+(12, 'Residuos peligrosos', 'Hazardous waste', 1, 1),
+(13, 'Residuos peligrosos', 'Déchets dangereux', 5, 1),
+(14, 'Residuos peligrosos', 'Resíduos perigosos', 4, 1),
+(15, 'Residuos de papel', 'Paper waste', 1, 1),
+(16, 'Residuos de papel', 'Déchets de papier', 5, 1),
+(17, 'Residuos de papel', 'Resíduos de papel', 4, 1),
+(18, 'Residuos de vidrio', 'Glass waste', 1, 1),
+(19, 'Residuos de vidrio', 'Déchets en verre', 5, 1),
+(20, 'Residuos de vidrio', 'Resíduos de vidro', 4, 1),
+(21, 'Residuos de alimentos', 'Food waste', 1, 1),
+(22, 'Residuos de alimentos', 'Déchets alimentaires', 5, 1),
+(23, 'Residuos de alimentos', 'Resíduos de alimentos', 4, 1),
+(24, 'Residuos de metales', 'Metal waste', 1, 1),
+(25, 'Residuos de metales', 'Déchets métalliques', 5, 1),
+(26, 'Residuos de metales', 'Resíduos de metais', 4, 1);
 
+INSERT INTO categoriaProducto (categoriaId,descripcion) VALUES
+(1, 13),
+(2, 5),
+(3, 20),
+(4, 8),
+(5, 6),
+(6, 24),
+(7, 19),
+(8, 15),
+(9, 10),
+(10, 16),
+(11, 18),
+(12, 3),
+(13, 2),
+(14, 12),
+(15, 4),
+(16, 22),
+(17, 26),
+(18, 23),
+(19, 9),
+(20, 14),
+(21, 25),
+(22, 7),
+(23, 1),
+(24, 21),
+(25, 11),
+(26, 17);
 
-SELECT * FROM divisas;
+INSERT INTO recipientes (recipienteId, productoId, recipCapacidad, recipPeso, enable, fechaCompra, categoriaId,actorId,estado)
+VALUES 
+    (1,3,90,8,1,'2023-01-01',15,1,1),
+    (2,2,80,8,1,'2023-01-01',8,2,1),
+    (3,5,80,8,1,'2023-01-01',9,3,1),
+    (4,12,60,5,1,'2023-01-01',18,11,1),
+    (5,12,70,8,1,'2023-01-01',13,5,1),
+    (6,8,90,8,1,'2023-01-01',21,10,1),
+    (7,9,80,8,1,'2023-01-01',7,5,4),
+    (8,4,60,5,1,'2023-01-01',20,6,1),
+    (9,2,70,8,1,'2023-01-01',6,7,1),
+    (10,4,80,8,1,'2023-01-01',12,3,1),
+    (11,2,100,8,1,'2023-01-01',8,2,1),
+    (12,5,60,5,1,'2023-01-01',7,1,1),
+    (13,1,60,5,1,'2023-01-01',10,1,1),
+    (14,15,90,8,1,'2023-01-01',17,4,1),
+    (15,1,80,8,1,'2023-01-01',23,7,1),
+    (16,11,60,5,1,'2023-01-01',7,6,1),
+    (17,8,80,8,1,'2023-01-01',22,5,1),
+    (18,9,70,8,1,'2023-01-01',9,8,1),
+    (19,13,70,8,1,'2023-01-01',20,1,1),
+    (20,6,80,8,1,'2023-01-01',17,2,1),
+    (21,6,100,8,1,'2023-01-01',5,3,1),
+    (22,4,60,5,1,'2023-01-01',21,4,1),
+    (23,1,50,8,1,'2023-01-01',3,5,1),
+    (24,11,90,8,1,'2023-01-01',7,5,1),
+    (25,9,70,8,1,'2023-01-01',12,6,1),
+    (26,10,80,8,1,'2023-01-01',4,7,1),
+    (27,4,90,8,1,'2023-01-01',8,8,1),
+    (28,7,60,5,1,'2023-01-01',6,5,1),
+    (29,8,100,8,1,'2023-01-01',4,5,1),
+    (30,13,80,8,1,'2023-01-01',12,5,1),
+    (31,9,60,5,1,'2023-01-01',17,7,1),
+    (32,13,60,5,1,'2023-01-01',17,7,1),
+    (33,6,60,5,1,'2023-01-01',15,2,1),
+	(34,4,60,5,1,'2023-01-01',21,2,1),
+	(35,15,100,8,1,'2023-01-01',4,2,1),
+	(36,3,70,8,1,'2023-01-01',25,5,1),
+	(37, 11, 60, 5, 1, '2023-01-01', 21,2,1),
+	(38, 2, 80, 8, 1, '2023-01-01', 4,6,1),
+	(39, 7, 70, 8, 1, '2023-01-01', 11,6,1),
+	(40, 1, 60, 5, 1, '2023-01-01', 25,6,1),
+	(41, 7, 80, 8, 1, '2023-01-01', 20,6,1),
+	(42, 4, 70, 8, 1, '2023-01-01', 19,6,1),
+	(43, 15, 50, 8, 1, '2023-01-01', 14,6,1),
+	(44, 5, 60, 5, 1, '2023-01-01', 7,5,1),
+	(45, 10, 50, 8, 1, '2023-01-01', 5,5,1),
+	(46, 7, 60, 5, 1, '2023-01-01', 10,5,1),
+	(47, 3, 80, 8, 1, '2023-01-01', 6,5,1),
+	(48, 8, 80, 8, 1, '2023-01-01', 22,5,1),
+	(49, 2, 90, 8, 1, '2023-01-01', 3,5,1),
+	(50, 2, 80, 8, 1, '2023-01-01', 15,5,1),
+	(51,1,60,5,1,'2023-01-01',25,1,1),
+	(52,15,90,8,1,'2023-01-01',23,1,1),
+	(53,10,50,8,1,'2023-01-01',5,1,1),
+	(54,6,60,5,1,'2023-01-01',4,5,1),
+	(55,12,60,5,1,'2023-01-01',10,5,1),
+	(56,10,90,8,1,'2023-01-01',23,2,1),
+	(57,2,60,5,1,'2023-01-01',18,2,1),
+	(58,7,80,8,1,'2023-01-01',17,2,1),
+	(59,7,60,5,1,'2023-01-01',5,5,1),
+	(60,5,100,8,1,'2023-01-01',11,1,1),
+	(61,9,50,8,1,'2023-01-01',12,1,1),
+	(62,8,80,8,1,'2023-01-01',25,3,1),
+	(63,7,60,5,1,'2023-01-01',16,3,1),
+	(64,3,70,8,1,'2023-01-01',21,3,1),
+	(65,12,80,8,1,'2023-01-01',4,3,1),
+	(66,5,70,8,1,'2023-01-01',9,3,1),
+	(67,4,50,8,1,'2023-01-01',10,1,1),
+	(68,2,100,8,1,'2023-01-01',4,5,1),
+	(69,10,70,8,1,'2023-01-01',22,1,1),
+	(70,12,70,8,1,'2023-01-01',16,5,1),
+	(71,10,60,5,1,'2023-01-01',8,1,1),
+	(72,8,90,8,1,'2023-01-01',3,5,1),
+	(73,8,80,8,1,'2023-01-01',13,5,1),
+	(74,7,80,8,1,'2023-01-01',7,5,1),
+	(75,8,60,5,1,'2023-01-01',21,5,1),
+	(76,3,80,8,1,'2023-01-01',19,5,1),
+	(77,5,60,5,1,'2023-01-01',15,5,1),
+	(78,15,70,8,1,'2023-01-01',11,5,1),
+	(79,14,80,8,1,'2023-01-01',17,5,1),
+	(80,11,70,8,1,'2023-01-01',10,1,1),
+	(81,14,80,8,1,'2023-01-01',9,1,1),
+      (82,7,90,8,1,'2023-01-01',16,1,1),
+      (83,5,50,8,1,'2023-01-01',7,1,1),
+      (84,3,60,5,1,'2023-01-01',24,1,1),
+      (85,3,100,8,1,'2023-01-01',20,1,1),
+      (86,14,90,8,1,'2023-01-01',22,2,1),
+      (87,2,100,8,1,'2023-01-01',25,2,1),
+      (88,4,50,8,1,'2023-01-01',6,5,1),
+      (89,13,60,5,1,'2023-01-01',8,2,1),
+      (90,1,80,8,1,'2023-01-01',3,1,1),
+      (91,7,60,5,1,'2023-01-01',20,1,1),
+      (92,3,50,8,1,'2023-01-01',5,1,1),
+      (93,14,100,8,1,'2023-01-01',10,5,1),
+      (94,6,50,8,1,'2023-01-01',23,5,1),
+      (95,10,70,8,1,'2023-01-01',13,5,1),
+      (96,9,60,5,1,'2023-01-01',7,5,1),
+      (97,5,60,5,1,'2023-01-01',12,6,1),
+      (98,7,60,5,1,'2023-01-01',17,6,1),
+      (99,1,80,8,1,'2023-01-01',15,5,1),
+      (100,12,60,5,1,'2023-01-01',9,5,1);
+
 SELECT * FROM paises;
 SELECT * FROM estados ;
 SELECT * FROM calles ;
@@ -517,5 +697,5 @@ SELECT * FROM categoriaProducto;
 
 DELETE FROM payType;
 DELETE FROM localesXproceso;
-DELETE FROM localesXproductor;
+DELETE FROM recipientes;
 

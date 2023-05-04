@@ -1,45 +1,58 @@
 --CONSULTAS PUNTO #2
 
-SELECT actores.descripcion,localesXproductor.localId, Paises.nombre ,recipientes.recipienteId,(traducciones.textoTradu) as categoria from actores inner join
-localesXproductor ON actores.actorId = localesXproductor.actorId inner JOIN
-direcciones ON localesXproductor.direccionId = direcciones.direccionId inner JOIN
-paises on direcciones.paisId = paises.paisId inner join
-recipienteXlocal ON localesXproductor.localId = recipienteXlocal.localId inner join
-recipientes ON recipienteXlocal.recipienteId = recipientes.recipienteId inner JOIN 
-categoriaProducto on recipientes.categoriaId = categoriaProducto.categoriaId inner join
-traducciones ON categoriaProducto.descripcion = traducciones.traduccionId
-ORDER BY actores.actorId ASC;
-
-SELECT actores.descripcion, localesXproductor.localId, Paises.nombre, traducciones.textoTradu 
-FROM actores 
-INNER JOIN localesXproductor ON actores.actorId = localesXproductor.actorId 
-INNER JOIN direcciones ON localesXproductor.direccionId = direcciones.direccionId 
-INNER JOIN Paises ON direcciones.paisId = Paises.paisId 
-LEFT JOIN recipientes ON actores.actorId = recipientes.actorId 
-LEFT JOIN categoriaProducto ON recipientes.categoriaId = categoriaProducto.categoriaId 
-LEFT JOIN traducciones ON categoriaProducto.descripcion = traducciones.traduccionId 
+SELECT actores.descripcion,localesXproductor.localId, Paises.nombre ,recipientes.recipienteId,(traducciones.textoTradu) as categoria
+FROM actores
+INNER JOIN localesXproductor ON actores.actorId = localesXproductor.actorId
+INNER JOIN direcciones ON localesXproductor.direccionId = direcciones.direccionId
+INNER JOIN paises ON direcciones.paisId = paises.paisId
+INNER JOIN recipienteXlocal ON localesXproductor.localId = recipienteXlocal.localId
+INNER JOIN recipientes ON recipienteXlocal.recipienteId = recipientes.recipienteId
+INNER JOIN categoriaProducto ON recipientes.categoriaId = categoriaProducto.categoriaId
+INNER JOIN traducciones ON categoriaProducto.descripcion = traducciones.traduccionId
 ORDER BY actores.actorId ASC;
 
 --consulta de vista indexada
-drop view dbo.vista_indexada;
+IF OBJECT_ID('dbo.vista_indexada','view') IS NOT NULL
+	DROP view dbo.vista_indexada;
+GO
+
 CREATE VIEW dbo.vista_indexada
 WITH SCHEMABINDING
 AS
-SELECT actores.descripcion,localesXproductor.localId, Paises.nombre ,recipientes.recipienteId,(traducciones.textoTradu) as categoria 
-FROM dbo.actores 
-INNER JOIN dbo.localesXproductor ON actores.actorId = localesXproductor.actorId 
+SELECT COUNT_BIG(*) AS countbig,actor.descripcion,localesXproductor.localId, Paises.nombre ,recipientes.recipienteId,(traducciones.textoTradu) as categoria 
+FROM dbo.actores actor 
+INNER JOIN dbo.localesXproductor ON actor.actorId = localesXproductor.actorId 
 INNER JOIN dbo.direcciones ON localesXproductor.direccionId = direcciones.direccionId 
 INNER JOIN dbo.paises ON direcciones.paisId = paises.paisId 
 INNER JOIN dbo.recipienteXlocal ON localesXproductor.localId = recipienteXlocal.localId 
 INNER JOIN dbo.recipientes ON recipienteXlocal.recipienteId = recipientes.recipienteId 
 INNER JOIN dbo.categoriaProducto ON recipientes.categoriaId = categoriaProducto.categoriaId 
-INNER JOIN dbo.traducciones ON categoriaProducto.descripcion = traducciones.traduccionId;
+INNER JOIN dbo.traducciones ON categoriaProducto.descripcion = traducciones.traduccionId 
+GROUP BY actor.descripcion,localesXproductor.localId, Paises.nombre ,recipientes.recipienteId,traducciones.textoTradu 
 GO
 
-CREATE UNIQUE CLUSTERED INDEX vista_indexada_index ON dbo.vista_indexada (recipienteId);
+DROP INDEX vista_indexada_index on dbo.vista_indexada
+GO
+
+CREATE UNIQUE CLUSTERED INDEX vista_indexada_index 
+	ON dbo.vista_indexada(descripcion,localId,nombre,recipienteId,categoria);
+go
 
 -- Consulta dinamica
+DECLARE @sqlConsulta NVARCHAR(1000)
+SET @sqlConsulta =
+'SELECT actores.descripcion,localesXproductor.localId, Paises.nombre ,recipientes.recipienteId,(traducciones.textoTradu) as categoria
+FROM actores
+INNER JOIN localesXproductor ON actores.actorId = localesXproductor.actorId
+INNER JOIN direcciones ON localesXproductor.direccionId = direcciones.direccionId
+INNER JOIN paises ON direcciones.paisId = paises.paisId
+INNER JOIN recipienteXlocal ON localesXproductor.localId = recipienteXlocal.localId
+INNER JOIN recipientes ON recipienteXlocal.recipienteId = recipientes.recipienteId
+INNER JOIN categoriaProducto ON recipientes.categoriaId = categoriaProducto.categoriaId
+INNER JOIN traducciones ON categoriaProducto.descripcion = traducciones.traduccionId
+ORDER BY actores.actorId ASC';
 
+EXECUTE sp_executesql @sqlConsulta
  
 SELECT * FROM dbo.vista_indexada;
 SELECT * FROM actores;

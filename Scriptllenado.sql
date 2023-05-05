@@ -371,9 +371,7 @@ BEGIN
   END
  END
 
- DELETE FROM localesXproductor;
- delete from localesXproceso;
- delete from metricasXlocal;
+
  --Llenar coberturaXempresa
 
    DROP PROCEDURE IF EXISTS spLlenarCoberturaXempresa;
@@ -403,7 +401,7 @@ BEGIN
  END
 
   --Llenar recipienteXlocal
-  DELETE FROM recipienteXlocal;
+
 
   DROP PROCEDURE IF EXISTS spRecipienteXlocal;
 CREATE PROCEDURE spRecipienteXlocal
@@ -528,7 +526,13 @@ BEGIN
  END
 
  --executes
+
 DELETE from recipienteXlocal;
+ DELETE FROM localesXproductor;
+ delete from localesXproceso;
+ DELETE FROM recipientes;
+ delete from metricasXlocal;
+
   exec spLlenarDirecciones;
   exec spLlenarEmpresas;
   exec spLlenarLocales;
@@ -537,6 +541,9 @@ DELETE from recipienteXlocal;
   exec spRecipientes;
   exec splocalxproceso;
   exec spmetricasxlocal;
+  
+
+  SELECT * FROM recipienteXlocal;
 
 INSERT INTO empresasEV (empresaId, direccionId)
 VALUES 
@@ -657,5 +664,4 @@ SELECT * FROM categoriaProducto;
 DELETE FROM payType;
 DELETE FROM localesXproceso;
 DELETE FROM recipientes;
-
 

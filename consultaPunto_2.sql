@@ -2,16 +2,16 @@
 
 --Consulta base
 
-SELECT actores.descripcion,localesXproductor.localId ,Paises.nombre,recipientes.recipienteId,(traducciones.textoTradu) as categoria
-FROM actores
-INNER JOIN localesXproductor ON actores.actorId = localesXproductor.actorId
+SELECT actor.descripcion,localesXproductor.localId ,Paises.nombre,recipientes.recipienteId,(traducciones.textoTradu) as categoria
+FROM actores actor
+INNER JOIN localesXproductor ON actor.actorId = localesXproductor.actorId
 INNER JOIN direcciones ON localesXproductor.direccionId = direcciones.direccionId
 INNER JOIN paises ON direcciones.paisId = paises.paisId
 INNER JOIN recipienteXlocal ON localesXproductor.localId = recipienteXlocal.localId
 INNER JOIN recipientes ON recipienteXlocal.recipienteId = recipientes.recipienteId
 INNER JOIN categoriaProducto ON recipientes.categoriaId = categoriaProducto.categoriaId
-INNER JOIN traducciones ON categoriaProducto.descripcion = traducciones.traduccionId
-ORDER BY actores.actorId ASC;
+INNER JOIN traducciones ON categoriaProducto.descripcion = traducciones.traduccionId where (recipientes.recipienteId%2)=0
+ORDER BY recipientes.recipienteId ASC;
 
 
 --consulta de vista indexada
@@ -30,8 +30,8 @@ INNER JOIN dbo.paises ON direcciones.paisId = paises.paisId
 INNER JOIN dbo.recipienteXlocal ON localesXproductor.localId = recipienteXlocal.localId 
 INNER JOIN dbo.recipientes ON recipienteXlocal.recipienteId = recipientes.recipienteId 
 INNER JOIN dbo.categoriaProducto ON recipientes.categoriaId = categoriaProducto.categoriaId 
-INNER JOIN dbo.traducciones ON categoriaProducto.descripcion = traducciones.traduccionId 
-GROUP BY actor.descripcion,localesXproductor.localId, Paises.nombre ,recipientes.recipienteId,traducciones.textoTradu 
+INNER JOIN dbo.traducciones ON categoriaProducto.descripcion = traducciones.traduccionId where (recipientes.recipienteId%2)=0 
+GROUP BY actor.descripcion,localesXproductor.localId, Paises.nombre ,recipientes.recipienteId,traducciones.textoTradu	
 GO
 
 DROP INDEX vista_indexada_index on dbo.vista_indexada
@@ -42,20 +42,20 @@ CREATE UNIQUE CLUSTERED INDEX vista_indexada_index
 go
 
 -- Consulta dinamica
-DECLARE @sqlConsulta NVARCHAR(MAX)
+DECLARE @sqlConsulta NVARCHAR(MAX)=N'';
 SET @sqlConsulta =
-'SELECT actores.descripcion,localesXproductor.localId, Paises.nombre ,recipientes.recipienteId,(traducciones.textoTradu) as categoria
-FROM actores
-INNER JOIN localesXproductor ON actores.actorId = localesXproductor.actorId
+N'SELECT actor.descripcion,localesXproductor.localId, Paises.nombre ,recipientes.recipienteId,(traducciones.textoTradu) as categoria
+FROM actores actor
+INNER JOIN localesXproductor ON actor.actorId = localesXproductor.actorId
 INNER JOIN direcciones ON localesXproductor.direccionId = direcciones.direccionId
 INNER JOIN paises ON direcciones.paisId = paises.paisId
 INNER JOIN recipienteXlocal ON localesXproductor.localId = recipienteXlocal.localId
 INNER JOIN recipientes ON recipienteXlocal.recipienteId = recipientes.recipienteId
 INNER JOIN categoriaProducto ON recipientes.categoriaId = categoriaProducto.categoriaId
-INNER JOIN traducciones ON categoriaProducto.descripcion = traducciones.traduccionId
-ORDER BY actores.actorId ASC';
+INNER JOIN traducciones ON categoriaProducto.descripcion = traducciones.traduccionId where (recipientes.recipienteId%2)=0 
+ORDER BY recipientes.recipienteId ASC ';
 
-EXECUTE sp_executesql @sqlConsulta
+exec sp_executesql @sqlConsulta
  
-SELECT * FROM dbo.vista_indexada WITH (NOEXPAND);
+SELECT * FROM dbo.vista_indexada;
 SELECT * FROM actores;

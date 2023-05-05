@@ -284,7 +284,8 @@ VALUES
 (7,16 ,16, 8,12325, 2),
 (8, 26, 26, 13, 30249, 3),
 (9, 31, 31, 16, 30242, 4),
-(10, 44, 44, 22, 30213, 5);
+(10, 44, 44, 22, 30213, 5);
+
 
 --Llenar direcciones
 
@@ -553,7 +554,8 @@ VALUES
 insert into tipoProcesoReco (procesoRecoid, descripcion) values
 (1,3),
 (2,4),
-(3,5);
+(3,5);
+
 
 --precios
 
@@ -575,7 +577,10 @@ values
 
 insert into PayType (payId, descripcion) values
 (1, 1),
-(2, 2);INSERT INTO Traducciones(traduccionId, textOrg, textoTradu, idiomaId, enabled) VALUES
+(2, 2);
+
+
+INSERT INTO Traducciones(traduccionId, textOrg, textoTradu, idiomaId, enabled) VALUES
 (1,'ejemplo1','example1',1,1),
 (2,'ejemplo2','example2',2,1),
 (3, 'Residuos plásticos', 'Plastic waste', 1, 1),
@@ -652,4 +657,5 @@ SELECT * FROM categoriaProducto;
 DELETE FROM payType;
 DELETE FROM localesXproceso;
 DELETE FROM recipientes;
+
 

@@ -345,32 +345,38 @@ BEGIN
 
   --Llenar locales
 
-   DROP PROCEDURE IF EXISTS spLlenarLocales;
+   DROP PROCEDURE IF EXISTS spLlenarLocales; 
 CREATE PROCEDURE spLlenarLocales
 AS
 BEGIN
   DECLARE @contador int;
   SET @contador = 1;
 
-  WHILE (@contador <= 100000)
+  WHILE (@contador <= 100)
   BEGIN
     DECLARE @direccionId int;
 	DECLARE @actorId int;
 	DECLARE @localId int;
 	DECLARE @payId int;
+	declare @cantProd int;
 
-    SET @direccionId =  CAST((RAND() * 100) + 1 AS int); 
-	SET @actorId =  CAST((RAND() * 21) + 1 AS int);
+	select @cantProd = count(*) from actores where tipoActorId = 1;
+
+    SET @direccionId =  @contador;
+	SET @actorId =  CAST((RAND() * @cantProd) + 1 AS int);
 	SET @payId =  CAST((RAND() * 2) + 1 AS int);
     SET @localId = @contador;
 
     INSERT INTO localesXproductor (localId,actorId,enabled,payId,direccionId)
     VALUES (@localId,@actorId,1,@payId,@direccionId);
+	Insert into cicloRecoleccion(cicloId, localId,fechaInicial,fechaFin)
+	values (@localId,@localId, '2023-01-01', '2999-12-12');
 
     SET @contador = @contador + 1;
   END
  END
-
+ delete from localesXproductor
+ exec spLlenarLocales
 
  --Llenar coberturaXempresa
 
@@ -526,7 +532,7 @@ BEGIN
  END
 
  --executes
-
+ 
 DELETE from recipienteXlocal;
  DELETE FROM localesXproductor;
  delete from localesXproceso;
@@ -588,7 +594,6 @@ insert into PayType (payId, descripcion) values
 
 
 INSERT INTO Traducciones(traduccionId, textOrg, textoTradu, idiomaId, enabled) VALUES
-(1,'ejemplo1','example1',1,1),
 (2,'ejemplo2','example2',2,1),
 (3, 'Residuos plásticos', 'Plastic waste', 1, 1),
 (4, 'Residuos plásticos', 'Déchets plastiques', 5, 1),

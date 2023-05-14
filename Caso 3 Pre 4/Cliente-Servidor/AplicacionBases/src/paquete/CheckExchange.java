@@ -58,7 +58,7 @@ public class CheckExchange extends javax.swing.JFrame {
         jComboBox5 = new javax.swing.JComboBox<>();
         jButton2 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel12 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
@@ -187,6 +187,11 @@ public class CheckExchange extends javax.swing.JFrame {
         jButton2.setBackground(new java.awt.Color(51, 204, 0));
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Entregar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 150, 180, -1));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -194,7 +199,7 @@ public class CheckExchange extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Tipo ", "Recipiente", "Desecho", "Peso"
+                "Tipo", "Recipiente", "Desecho", "Peso/Cant"
             }
         ) {
             Class[] types = new Class [] {
@@ -205,22 +210,17 @@ public class CheckExchange extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setHeaderValue("Recipiente");
-            jTable1.getColumnModel().getColumn(1).setHeaderValue("Desecho");
-            jTable1.getColumnModel().getColumn(2).setHeaderValue("Peso");
-        }
+        jScrollPane2.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
         );
 
         jPanel1.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 230, 340, 300));
@@ -375,6 +375,41 @@ public class CheckExchange extends javax.swing.JFrame {
                  System.out.println(nomb);
              }
         }
+         
+         
+         
+         
+         //Validar Categoria correspondiente
+         int catid = 0;
+         ArrayList<Categoria> array4 = objeto4.getCategorias();
+         String catnom = jComboBox5.getSelectedItem().toString();
+         for(int i = 0; i<array4.size(); i++){  
+             if(catnom.equals(array4.get(i).descripcion)){
+                 catid = array4.get(i).id;
+             }
+        }
+         
+         Clase a = new Clase();
+         boolean result = a.checkCat(prodid, catid);
+         if(!result){
+             JOptionPane.showMessageDialog(null,"Ese desecho no corresponde a esa categoria","ERROR", JOptionPane.ERROR_MESSAGE);
+         }
+         else if(jTextField1.getText().equals("")){
+             JOptionPane.showMessageDialog(null,"Digite el peso","ERROR", JOptionPane.ERROR_MESSAGE);
+         }
+                 else{
+                      String desecho = jComboBox3.getSelectedItem().toString();
+                      String peso = jTextField1.getText();
+
+                      String[] row = {"R","recipiente", desecho, peso};
+                      DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+                      model.addRow(row);  
+             }
+            
+         
+         
+         
         //funcion buscar recipiente 
         
         
@@ -383,13 +418,7 @@ public class CheckExchange extends javax.swing.JFrame {
         
         //Agregar al registro
         
-        String desecho = jComboBox3.getSelectedItem().toString();
-        String peso = jTextField1.getText();
         
-        String[] row = {"R","recipiente", desecho, peso};
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-
-        model.addRow(row);
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -446,6 +475,15 @@ public class CheckExchange extends javax.swing.JFrame {
             model.removeRow(jTable1.getSelectedRow());
         
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+      
+         String catnom = jComboBox6.getSelectedItem().toString();
+         String peso = jTextField2.getText();
+         String[] row = {"E","recipiente", catnom, peso};
+         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.addRow(row);  
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -510,7 +548,7 @@ public class CheckExchange extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;

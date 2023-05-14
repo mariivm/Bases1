@@ -158,6 +158,29 @@ public class Clase implements Interfaz {
        
     }
     
+    public boolean checkCat(int prodid, int catid) {
+        int result = 1;
+        try {
+
+            Statement stmt = conexion.createStatement();
+            String SQL = "Select categoriaid from categoriaxproductos where productoid = "+prodid ;
+            ResultSet rs = stmt.executeQuery(SQL);
+            
+            while (rs.next()) {
+                result = rs.getInt("categoriaid");
+                                      
+              
+            }
+            
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return result == catid;
+       
+    }
+    
+    
     public int searchContainer(int idP) {
         int result = 0;
         try {

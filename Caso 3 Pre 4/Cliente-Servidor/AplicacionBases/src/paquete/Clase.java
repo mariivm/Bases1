@@ -1,5 +1,6 @@
 package paquete;
 
+import com.microsoft.sqlserver.jdbc.SQLServerDataTable;
 import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,13 +35,12 @@ public class Clase implements Interfaz {
         try {
 
             Statement stmt = conexion.createStatement();
-            String SQL = "SELECT usuario, password FROM dbo.RegisterUsers";
+            String SQL = "SELECT id,usuario, password FROM dbo.RegisterUsers";
             ResultSet rs = stmt.executeQuery(SQL);
             
             while (rs.next()) {
-                Users newUser = new Users(rs.getString("usuario"), rs.getString("password"));
+                Users newUser = new Users(rs.getInt("id"),rs.getString("usuario"), rs.getString("password"));
                 result.add(newUser);
-                System.out.println(rs.getString("usuario"));
               
             }
             System.out.println(rs);
@@ -181,7 +181,35 @@ public class Clase implements Interfaz {
     }
     
     
-    public int searchContainer(int idP) {
+    public int searchContainer(int id, String type) {
+        int result = 0;
+        try {
+
+            Statement stmt = conexion.createStatement();
+            String SQL;
+            if (type.equals("r")){
+                SQL = "select top 1 recipienteid from recipientes where productoId ="+id+" and estado =1";
+            }else{
+                SQL = "select top 1 recipienteid from recipientes where categoriaId ="+id+" and estado =2";
+            }
+            
+            ResultSet rs = stmt.executeQuery(SQL);
+            
+            while (rs.next()) {
+                    result = rs.getInt("recipienteid");                 
+              
+            }
+            
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return result;
+       
+    }
+    
+    //Agregar recipiente en caso de q no hayan disponibles 
+    public int addContainer(int idP) {
         int result = 0;
         try {
 
@@ -202,24 +230,47 @@ public class Clase implements Interfaz {
        
     }
     
-    public int updateContainer(int idP) {
+    public int updateContainer(int idR, int status) {
         int result = 0;
         try {
 
             Statement stmt = conexion.createStatement();
-            String SQL = "select top 1 recipienteid from recipientes where productoId ="+idP+" and estado =1";
-            ResultSet rs = stmt.executeQuery(SQL);
-            
-            while (rs.next()) {
-                    result = rs.getInt("recipienteid");                 
-              
-            }
-            
+            String SQL = "update recipientes set estado = "+status+" where recipienteId ="+idR;
+            stmt.executeUpdate(SQL);          
             
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return result;
+       
+    }
+    
+    public void insertintoTVP(ArrayList<Movimiento> registro) {
+        
+        try {
+            SQLServerDataTable movimientos = new SQLServerDataTable();
+            movimientos.addColumnMetadata("userid", java.sql.Types.INTEGER);
+            movimientos.addColumnMetadata("recipienteid", java.sql.Types.INTEGER);
+            movimientos.addColumnMetadata("accion", java.sql.Types.INTEGER);
+            movimientos.addColumnMetadata("recolectora", java.sql.Types.INTEGER);
+            movimientos.addColumnMetadata("localid", java.sql.Types.INTEGER);
+            movimientos.addColumnMetadata("fecha", java.sql.Types.DATE);
+            movimientos.addColumnMetadata("checksum", java.sql.Types.VARBINARY);
+            for(Movimiento mov:registro){
+                movimientos.addRow(mov.userid, mov.recipienteid,
+                            mov.accion, mov.recid, mov.locid, mov.fecha, new byte[]{0x00});
+            }
+ 
+            
+            
+            PreparedStatement spGetProductorForRecolector = conexion.prepareStatement("{call dbo.GetnExchange(?)}");
+            spGetProductorForRecolector.setObject(1, movimientos);
+            spGetProductorForRecolector.execute();       
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        
        
     }
     

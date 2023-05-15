@@ -648,6 +648,10 @@ INSERT INTO categoriaProducto (categoriaId,descripcion) VALUES
 (25, 11),
 (26, 17);
 
+insert into acciones (accionid, descripcion) values
+(1,'Recoleccion'),(2,'Entrega');
+
+
 
 SELECT * FROM paises;
 SELECT * FROM estados ;

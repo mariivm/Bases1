@@ -131,7 +131,7 @@ public class Login extends javax.swing.JFrame {
         
         for(int i = 0; i < array.size(); i++){
             if(array.get(i).user.equals(uid) && array.get(i).password.equals(pwd)){
-                CheckExchange frame = new CheckExchange();
+                CheckExchange frame = new CheckExchange(array.get(i).id);
                 frame.setVisible(true);
                 this.dispose();
             }

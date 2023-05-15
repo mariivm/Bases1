@@ -3,6 +3,10 @@ import paquete.Clase;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
+
 
 public class CheckExchange extends javax.swing.JFrame {
 
@@ -11,22 +15,27 @@ public class CheckExchange extends javax.swing.JFrame {
     public Clase objeto3 = new Clase();
     public Clase objeto4 = new Clase();
     public Clase objeto5 = new Clase();
-    public int Recid, locid;
+    public int Recid, locid,userid;
     
     /**
      * Creates new form CheckExchange
+     * @param userid
      */
     public CheckExchange() {
+        initComponents();
+        this.setLocationRelativeTo(null);
+    }
+    
+    public CheckExchange(int userid_) {
         initComponents();
         this.setLocationRelativeTo(null);
         
         for(int i = 0; i<array.size(); i++){  
              jComboBox1.addItem(array.get(i).descripcion);
-        }
-        
-
- 
- 
+        }      
+        userid = userid_;
+        Recid = 0;
+        locid = 0;
     }
 
     /**
@@ -310,6 +319,7 @@ public class CheckExchange extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        jComboBox1.setEnabled(false);
         String descp = jComboBox1.getSelectedItem().toString();
         int id=1;
         for(int i = 0; i<array.size(); i++){  
@@ -343,7 +353,8 @@ public class CheckExchange extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        //llenar productores 
+        jComboBox2.setEnabled(false);
+//llenar productores 
         String descp = jComboBox2.getSelectedItem().toString();
         int id=1;
         ArrayList<Productor> array2 = objeto3.getProducers(Recid);
@@ -366,18 +377,17 @@ public class CheckExchange extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       
+
         String nomb = jComboBox3.getSelectedItem().toString();
         int prodid = 1;
         ArrayList<Producto> array3 = objeto4.getProducts(locid);
          for(int i = 0; i<array3.size(); i++){  
              if(nomb.equals(array3.get(i).nombre)){
-                 prodid = array3.get(i).id;
-                 System.out.println(nomb);
+                 prodid = array3.get(i).id;                
              }
         }
-         
-         
-         
+
          
          //Validar Categoria correspondiente
          int catid = 0;
@@ -398,33 +408,52 @@ public class CheckExchange extends javax.swing.JFrame {
              JOptionPane.showMessageDialog(null,"Digite el peso","ERROR", JOptionPane.ERROR_MESSAGE);
          }
                  else{
-                      String desecho = jComboBox3.getSelectedItem().toString();
-                      String peso = jTextField1.getText();
+             
+                    Clase obj5 = new Clase();
+                    int recId = obj5.searchContainer(prodid, "r");       
+                    obj5.updateContainer(recId, 2);
 
-                      String[] row = {"R","recipiente", desecho, peso};
-                      DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+                    String desecho = jComboBox3.getSelectedItem().toString();
+                    String peso = jTextField1.getText();
 
-                      model.addRow(row);  
+                    String[] row = {"R",Integer.toString(recId), desecho, peso};
+                    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+                    model.addRow(row);  
+
+                    jComboBox3.removeAllItems();
+                    jTextField1.setText("");
              }
-            
-         
-         
-         
-        //funcion buscar recipiente 
-        
-        
-        
-        
-        
-        //Agregar al registro
-        
-        
+
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         int respuesta = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea finalizar?", "Confirmación", JOptionPane.YES_NO_OPTION);
         if (respuesta == JOptionPane.YES_OPTION) {
+            ArrayList<Movimiento> Movimiento =  new ArrayList<Movimiento>();
+            int accion;
+            int recipienteid;
+            Clase obj = new Clase();
+            
+            //fecha
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date currentDate = new Date();
+            String formattedDate = dateFormat.format(currentDate);
+            //
+            
+           
+            for (int i = 0; i < jTable1.getRowCount(); i++) {
+                if (jTable1.getValueAt(i, 0).equals("R")){
+                    accion = 1;
+                }
+                else{
+                    accion =2;
+                }
+               recipienteid = Integer.parseInt((String)jTable1.getValueAt(i, 1));
+               Movimiento.add(new Movimiento(userid, recipienteid, accion, Recid,locid, formattedDate ));
+            }
+            obj.insertintoTVP(Movimiento);
             Login frame = new Login();
             frame.setVisible(true);
             this.dispose();
@@ -471,18 +500,45 @@ public class CheckExchange extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        if(jTable1.getSelectedRow() != -1)
+        if(jTable1.getSelectedRow() != -1){
+            Clase obj = new Clase();
+            int recId = Integer.parseInt((String) jTable1.getValueAt(jTable1.getSelectedRow(), 1));
+            if(jTable1.getValueAt(jTable1.getSelectedRow(), 0).equals("R")){
+                obj.updateContainer(recId, 1);
+            }
+            else{
+                obj.updateContainer(recId, 2);
+            }
             model.removeRow(jTable1.getSelectedRow());
-        
+        }
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-      
-         String catnom = jComboBox6.getSelectedItem().toString();
-         String peso = jTextField2.getText();
-         String[] row = {"E","recipiente", catnom, peso};
-         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.addRow(row);  
+        if (jTextField2.getText().equals("")){
+            JOptionPane.showMessageDialog(null,"Digite una cantidad","ERROR", JOptionPane.ERROR_MESSAGE);
+
+        }else{
+            String catnom = jComboBox6.getSelectedItem().toString();
+            int catid = 0;
+            ArrayList<Categoria> array4 = objeto4.getCategorias();
+            for(int i = 0; i<array4.size(); i++){  
+                if(catnom.equals(array4.get(i).descripcion)){
+                    catid = array4.get(i).id;
+                }
+            }
+            int cant = Integer.parseInt(jTextField2.getText()); 
+            Clase obj5 = new Clase();
+            for (int i = 1; i<= cant; i++){
+                int recId = obj5.searchContainer(catid, "e");  
+                obj5.updateContainer(recId, 1);
+                String[] row = {"E",Integer.toString(recId), catnom, "1"};
+                DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+                model.addRow(row); 
+            }
+             
+            jTextField2.setText("");
+        
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

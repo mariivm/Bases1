@@ -1,7 +1,10 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.pool import NullPool
 
-# pool: True si se desea usar un pool de conexiones, False si no
+#---------------------------------------------
+# Función encargada de realizar la conexion con la base de datos
+#---------------------------------------------
+
 def createConnection(pool):
     username = "sa"
     password = "123"
@@ -15,6 +18,9 @@ def createConnection(pool):
         engine = create_engine(f"mssql+pyodbc://{username}:{password}@{server}:{port}/{db}?driver={driver}", poolclass=NullPool)
     return engine
 
+#---------------------------------------------
+# Función encargada de crear la conexion con la base de datos y llamar al (SP)
+#---------------------------------------------
 
 def getLocalesPais(pool):
     engine = createConnection(pool)

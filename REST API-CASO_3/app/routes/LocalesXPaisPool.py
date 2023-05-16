@@ -1,7 +1,10 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 from app.controllers import localesPais_controller
 
 
+#---------------------------------------------
+# Define la ruta del endpoint Pool
+#---------------------------------------------
 bp = Blueprint('LocalesXPaisPool', __name__, url_prefix='/LocalesXPaisPool')
 
 

@@ -431,32 +431,42 @@ public class CheckExchange extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         int respuesta = JOptionPane.showConfirmDialog(null, "¿Está seguro de que desea finalizar?", "Confirmación", JOptionPane.YES_NO_OPTION);
         if (respuesta == JOptionPane.YES_OPTION) {
-            ArrayList<Movimiento> Movimiento =  new ArrayList<Movimiento>();
-            int accion;
-            int recipienteid;
-            Clase obj = new Clase();
-            
-            //fecha
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date currentDate = new Date();
-            String formattedDate = dateFormat.format(currentDate);
-            //
-            
-           
-            for (int i = 0; i < jTable1.getRowCount(); i++) {
-                if (jTable1.getValueAt(i, 0).equals("R")){
-                    accion = 1;
+            if (locid == 0){
+                JOptionPane.showMessageDialog(null,"No ha seleccionado un local","ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+            else{
+                if(jTable1.getRowCount() <1 ){
+                    JOptionPane.showMessageDialog(null,"No hay nada registrado","ERROR", JOptionPane.ERROR_MESSAGE);
                 }
                 else{
-                    accion =2;
+                    ArrayList<Movimiento> Movimiento =  new ArrayList<Movimiento>();
+                    int accion;
+                    int recipienteid;
+                    Clase obj = new Clase();
+
+                    //fecha
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date currentDate = new Date();
+                    String formattedDate = dateFormat.format(currentDate);
+                    //
+
+
+                    for (int i = 0; i < jTable1.getRowCount(); i++) {
+                        if (jTable1.getValueAt(i, 0).equals("R")){
+                            accion = 1;
+                        }
+                        else{
+                            accion =2;
+                        }
+                       recipienteid = Integer.parseInt((String)jTable1.getValueAt(i, 1));
+                       Movimiento.add(new Movimiento(userid, recipienteid, accion, Recid,locid, formattedDate ));
+                    }
+                    obj.insertintoTVP(Movimiento);
+                    Login frame = new Login();
+                    frame.setVisible(true);
+                    this.dispose();
                 }
-               recipienteid = Integer.parseInt((String)jTable1.getValueAt(i, 1));
-               Movimiento.add(new Movimiento(userid, recipienteid, accion, Recid,locid, formattedDate ));
             }
-            obj.insertintoTVP(Movimiento);
-            Login frame = new Login();
-            frame.setVisible(true);
-            this.dispose();
         } 
     }//GEN-LAST:event_jButton5ActionPerformed
 
